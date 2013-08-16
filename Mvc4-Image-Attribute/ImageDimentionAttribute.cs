@@ -7,15 +7,30 @@ using System.Web;
 
 namespace ImageAttributes
 {
+    public enum ImageDimentionOption
+    {
+        SmallerThan,
+        LargerThan,
+        EqualTo
+    }
     public class ImageDimentionAttribute : ValidationAttribute
     {
         private int height;
         private int width;
-        
+        private ImageDimentionOption imageDimentionOption;
+
         public ImageDimentionAttribute(int width, int height)
         {
             this.width = width;
             this.height = height;
+            this.imageDimentionOption = ImageDimentionOption.EqualTo;
+        }
+
+        public ImageDimentionAttribute(int width, int height, ImageDimentionOption option)
+        {
+            this.width = width;
+            this.height = height;
+            this.imageDimentionOption = option;
         }
 
         public override bool IsValid(object value)
@@ -33,9 +48,20 @@ namespace ImageAttributes
                 try
                 {
                     var image = new Bitmap(file.InputStream);
-                    if ((image != null) && (image.Width > width) && (image.Height > height))
+                    if (image != null)
                     {
-                        return true;
+                        if ((this.imageDimentionOption == ImageDimentionOption.LargerThan) && (image.Width > width) && (image.Height > height))
+                        {
+                            return true;
+                        }
+                        else if ((this.imageDimentionOption == ImageDimentionOption.SmallerThan) && (image.Width < width) && (image.Height < height))
+                        {
+                            return true;
+                        }
+                        else if ((this.imageDimentionOption == ImageDimentionOption.EqualTo) && (image.Width == width) && (image.Height == height))
+                        {
+                            return true;
+                        }
                     }
                 }
                 catch { }
