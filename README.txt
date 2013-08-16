@@ -1,0 +1,1 @@
+This project is the collection of classes for working with Image files in ASP.MVC 4
